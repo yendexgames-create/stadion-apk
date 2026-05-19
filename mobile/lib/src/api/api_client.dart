@@ -136,4 +136,11 @@ class ApiClient {
     }
     _throwApi(r.statusCode, body);
   }
+
+  Future<AdminScheduleResponse> getAdminSchedule(String startDateYmd) async {
+    final r = await http.get(_u('/admin/schedule', {'startDate': startDateYmd}), headers: _headers(auth: false, admin: true));
+    final body = await _decode(r);
+    if (r.statusCode >= 200 && r.statusCode < 300) return AdminScheduleResponse.fromJson(body);
+    _throwApi(r.statusCode, body);
+  }
 }

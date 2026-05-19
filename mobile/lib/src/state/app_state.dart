@@ -1,16 +1,19 @@
 import 'dart:convert';
+import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
 import '../api/api_client.dart';
 import '../api/models.dart';
 import '../config/app_config.dart';
+import '../notifications/notification_service.dart';
 import '../storage/prefs.dart';
 
 class AppState extends ChangeNotifier {
   AppState(this._prefs);
 
   final Prefs _prefs;
+  Timer? _penaltyTimer;
 
   String? _baseUrl;
   String? _userToken;
@@ -47,6 +50,9 @@ class AppState extends ChangeNotifier {
     if (hasBaseUrl && isUserLoggedIn) {
       await refreshMe(silent: true);
     }
+    if (isAdminLoggedIn) {
+      _startPenaltyPolling();
+    }
   }
 
   Future<void> setBaseUrl(String url) async {
@@ -66,6 +72,7 @@ class AppState extends ChangeNotifier {
   Future<void> logoutAdmin() async {
     _adminToken = null;
     await _prefs.clearAdminToken();
+    _stopPenaltyPolling();
     notifyListeners();
   }
 
@@ -104,9 +111,52 @@ class AppState extends ChangeNotifier {
     _adminToken = r.token;
     await _prefs.setAdminToken(r.token);
     notifyListeners();
+    _startPenaltyPolling(resetBaseline: true);
   }
 
   Future<List<PenaltyItem>> getPenalties() => api.getPenalties();
+  Future<AdminScheduleResponse> getAdminSchedule(String startDateYmd) => api.getAdminSchedule(startDateYmd);
+
+  void _stopPenaltyPolling() {
+    _penaltyTimer?.cancel();
+    _penaltyTimer = null;
+  }
+
+  void _startPenaltyPolling({bool resetBaseline = false}) {
+    _stopPenaltyPolling();
+    if (!isAdminLoggedIn) return;
+
+    // Bir marta darhol tekshiramiz, keyin periodik.
+    _checkPenalties(resetBaseline: resetBaseline);
+    _penaltyTimer = Timer.periodic(const Duration(seconds: 30), (_) => _checkPenalties());
+  }
+
+  Future<void> _checkPenalties({bool resetBaseline = false}) async {
+    if (!isAdminLoggedIn) return;
+    try {
+      final items = await getPenalties();
+      if (items.isEmpty) return;
+      final newest = items.first;
+
+      final lastId = _prefs.lastPenaltyId;
+      if (resetBaseline || lastId == null || lastId.isEmpty) {
+        await _prefs.setLastPenaltyId(newest.id);
+        return;
+      }
+
+      if (newest.id != lastId) {
+        await _prefs.setLastPenaltyId(newest.id);
+        final u = newest.user;
+        final who = u == null ? '' : '${u.name} ${u.phone}';
+        await NotificationService.showPenalty(
+          title: 'Yangi jarima: ${newest.amount} so‘m',
+          body: '${newest.date} ${newest.startTime} $who',
+        );
+      }
+    } catch {
+      // polling xatolari UI'ni buzmasin
+    }
+  }
 
   String prettyError(Object e) {
     final s = e.toString();

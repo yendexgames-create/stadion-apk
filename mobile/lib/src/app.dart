@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'screens/admin/admin_screen.dart';
 import 'screens/admin/admin_shell.dart';
 import 'screens/auth/auth_screen.dart';
 import 'screens/home/home_shell.dart';
@@ -82,7 +81,6 @@ class _AppState extends State<App> {
               if (!state.isUserLoggedIn) return AuthScreen(state: state);
               return HomeShell(
                 state: state,
-                adminBuilder: () => AdminScreen(state: state),
                 settingsBuilder: () => SettingsScreen(state: state),
               );
             },

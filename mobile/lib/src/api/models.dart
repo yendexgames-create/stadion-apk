@@ -237,3 +237,59 @@ class PenaltyUser {
     );
   }
 }
+
+class AdminScheduleResponse {
+  AdminScheduleResponse({required this.startDate, required this.days});
+
+  final String startDate;
+  final List<AdminScheduleDay> days;
+
+  factory AdminScheduleResponse.fromJson(Map<String, dynamic> json) {
+    final list = (json['days'] as List?) ?? const [];
+    return AdminScheduleResponse(
+      startDate: s(json['startDate']),
+      days: list.map((e) => AdminScheduleDay.fromJson((e as Map).cast<String, dynamic>())).toList(),
+    );
+  }
+}
+
+class AdminScheduleDay {
+  AdminScheduleDay({required this.date, required this.slots});
+
+  final String date;
+  final List<AdminScheduleSlot> slots;
+
+  factory AdminScheduleDay.fromJson(Map<String, dynamic> json) {
+    final list = (json['slots'] as List?) ?? const [];
+    return AdminScheduleDay(
+      date: s(json['date']),
+      slots: list.map((e) => AdminScheduleSlot.fromJson((e as Map).cast<String, dynamic>())).toList(),
+    );
+  }
+}
+
+class AdminScheduleSlot {
+  AdminScheduleSlot({
+    required this.startTime,
+    required this.endTime,
+    required this.status,
+    required this.bookingType,
+    required this.user,
+  });
+
+  final String startTime;
+  final String endTime;
+  final String status; // free|busy
+  final String? bookingType; // daily|weekly
+  final PenaltyUser? user; // reuse: name+phone
+
+  factory AdminScheduleSlot.fromJson(Map<String, dynamic> json) {
+    return AdminScheduleSlot(
+      startTime: s(json['startTime']),
+      endTime: s(json['endTime']),
+      status: s(json['status']),
+      bookingType: json['bookingType'] == null ? null : s(json['bookingType']),
+      user: json['user'] == null ? null : PenaltyUser.fromJson((json['user'] as Map).cast<String, dynamic>()),
+    );
+  }
+}

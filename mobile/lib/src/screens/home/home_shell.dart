@@ -9,12 +9,10 @@ class HomeShell extends StatefulWidget {
   const HomeShell({
     super.key,
     required this.state,
-    required this.adminBuilder,
     required this.settingsBuilder,
   });
 
   final AppState state;
-  final Widget Function() adminBuilder;
   final Widget Function() settingsBuilder;
 
   @override
@@ -30,7 +28,6 @@ class _HomeShellState extends State<HomeShell> {
       SlotsScreen(state: widget.state),
       MyBookingsScreen(state: widget.state),
       ProfileScreen(state: widget.state),
-      widget.adminBuilder(),
     ];
 
     return Scaffold(
@@ -62,7 +59,6 @@ class _HomeShellState extends State<HomeShell> {
           NavigationDestination(icon: Icon(Icons.sports_soccer), label: 'Slotlar'),
           NavigationDestination(icon: Icon(Icons.list_alt), label: 'Bronlarim'),
           NavigationDestination(icon: Icon(Icons.person), label: 'Profil'),
-          NavigationDestination(icon: Icon(Icons.admin_panel_settings), label: 'Admin'),
         ],
       ),
     );

@@ -7,6 +7,7 @@ import { meRouter } from "./routes/me.js";
 import { slotsRouter } from "./routes/slots.js";
 import { bookingsRouter } from "./routes/bookings.js";
 import { penaltiesRouter } from "./routes/penalties.js";
+import { adminScheduleRouter } from "./routes/admin_schedule.js";
 import { requireAdmin, requireAuth } from "./middleware/auth.js";
 import { createTelegramBot, telegramWebhookMiddleware } from "./telegram.js";
 import { startCron } from "./cron.js";
@@ -26,6 +27,7 @@ async function main() {
   app.use("/slots", requireAuth, slotsRouter);
   app.use("/bookings", requireAuth, bookingsRouter);
   app.use("/admin/penalties", requireAuth, requireAdmin, penaltiesRouter);
+  app.use("/admin/schedule", requireAuth, requireAdmin, adminScheduleRouter);
 
   const bot = createTelegramBot();
   if (bot) {

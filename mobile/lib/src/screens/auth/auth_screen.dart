@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../state/app_state.dart';
 import '../settings/settings_screen.dart';
@@ -21,6 +22,20 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _requested = false;
   bool _loading = false;
   String? _error;
+
+  Future<void> _openTelegramBot() async {
+    const username = 'stadiontop_bot';
+    final tg = Uri.parse('tg://resolve?domain=$username');
+    final web = Uri.parse('https://t.me/$username');
+    try {
+      // Avval Telegram app'ni ochishga harakat qilamiz.
+      final ok = await launchUrl(tg, mode: LaunchMode.externalApplication);
+      if (ok) return;
+    } catch {
+      // ignore
+    }
+    await launchUrl(web, mode: LaunchMode.externalApplication);
+  }
 
   @override
   void dispose() {
@@ -53,7 +68,6 @@ class _AuthScreenState extends State<AuthScreen> {
       _error = null;
     });
     try {
-      // Talab bo‘yicha: "Ism" maydoniga admin paroli yoziladi.
       await widget.state.adminLogin(phone: _phone.text.trim(), password: _name.text);
     } catch (e) {
       if (!mounted) return;
@@ -80,6 +94,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final phoneOk = _phone.text.trim().isNotEmpty;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Kirish'),
@@ -132,7 +147,24 @@ class _AuthScreenState extends State<AuthScreen> {
                         controller: _phone,
                         decoration: const InputDecoration(labelText: 'Telefon (+998...)', prefixIcon: Icon(Icons.phone)),
                         keyboardType: TextInputType.phone,
+                        onChanged: (_) => setState(() {}),
                       ),
+                      if (!_adminMode && !_requested && phoneOk) ...[
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            onPressed: _loading ? null : _openTelegramBot,
+                            icon: const Icon(Icons.send),
+                            label: const Text('@stadiontop_bot ga o‘tish (kontakt yuborish)'),
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          'Eslatma: OTP uchun botga kirib kontakt yuborilgan bo‘lishi kerak.',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ],
                       const SizedBox(height: 12),
                       SwitchListTile.adaptive(
                         value: _adminMode,
@@ -154,7 +186,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       if (!_requested || _adminMode) ...[
                         TextField(
                           controller: _name,
-                          decoration: const InputDecoration(labelText: 'Ism'),
+                          decoration: InputDecoration(labelText: _adminMode ? 'Admin parol' : 'Ism'),
                           obscureText: _adminMode,
                         ),
                         const SizedBox(height: 12),
@@ -173,6 +205,15 @@ class _AuthScreenState extends State<AuthScreen> {
                             prefixIcon: Icon(Icons.password),
                           ),
                           keyboardType: TextInputType.number,
+                        ),
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            onPressed: _loading ? null : _openTelegramBot,
+                            icon: const Icon(Icons.send),
+                            label: const Text('Kod botda (ochish)'),
+                          ),
                         ),
                         const SizedBox(height: 12),
                         SizedBox(
@@ -207,10 +248,11 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              Text(
-                'Eslatma: OTP uchun Telegram botga /start qilib kontakt yuborilgan bo‘lishi kerak.',
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
+              if (!_adminMode && !_requested)
+                Text(
+                  'Qadamlar: 1) Botga o‘ting va kontakt yuboring  2) Ilovada “Kod so‘rash”  3) Botdan kelgan kodni kiriting.',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
             ],
           ),
         ),
