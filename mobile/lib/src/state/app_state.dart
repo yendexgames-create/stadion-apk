@@ -153,7 +153,7 @@ class AppState extends ChangeNotifier {
           body: '${newest.date} ${newest.startTime} $who',
         );
       }
-    } catch {
+    } catch (_) {
       // polling xatolari UI'ni buzmasin
     }
   }

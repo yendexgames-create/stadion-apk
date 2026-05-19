@@ -31,7 +31,7 @@ class _AuthScreenState extends State<AuthScreen> {
       // Avval Telegram app'ni ochishga harakat qilamiz.
       final ok = await launchUrl(tg, mode: LaunchMode.externalApplication);
       if (ok) return;
-    } catch {
+    } catch (_) {
       // ignore
     }
     await launchUrl(web, mode: LaunchMode.externalApplication);
