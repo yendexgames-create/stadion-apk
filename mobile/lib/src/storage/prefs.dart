@@ -11,6 +11,7 @@ class Prefs {
 
   String? get baseUrl => _p.getString(_kBaseUrl);
   Future<void> setBaseUrl(String value) => _p.setString(_kBaseUrl, value);
+  Future<void> clearBaseUrl() => _p.remove(_kBaseUrl);
 
   String? get userToken => _p.getString(_kUserToken);
   Future<void> setUserToken(String value) => _p.setString(_kUserToken, value);
