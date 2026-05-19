@@ -33,7 +33,14 @@ class AppState extends ChangeNotifier {
   Future<void> init() async {
     // 1) Avval SharedPreferences'dan o‘qiymiz (agar foydalanuvchi qo‘lda sozlagan bo‘lsa).
     // 2) Aks holda build-time `--dart-define=BASE_URL=...` (yoki default) ishlaydi.
-    _baseUrl = (_prefs.baseUrl?.trim().isNotEmpty ?? false) ? _prefs.baseUrl : AppConfig.defaultBaseUrl;
+    final saved = _prefs.baseUrl?.trim();
+    // Oldingi versiyalarda baseUrl qo‘lda kiritilgan bo‘lishi mumkin (masalan: lokal IP).
+    // Release build'larda xavfsiz default'ga qaytamiz.
+    if (!kDebugMode && (saved?.startsWith('http://') ?? false)) {
+      _baseUrl = AppConfig.defaultBaseUrl;
+    } else {
+      _baseUrl = (saved?.isNotEmpty ?? false) ? saved : AppConfig.defaultBaseUrl;
+    }
     _userToken = _prefs.userToken;
     _adminToken = _prefs.adminToken;
     notifyListeners();
