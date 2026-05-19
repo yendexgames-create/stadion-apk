@@ -19,6 +19,14 @@ subprojects {
     project.evaluationDependsOn(":app")
 }
 
+// Ba’zi muhitlarda eski `appcompat-1.1.0` resurslari AAPT2 bilan muammo berishi mumkin.
+// Shuni oldini olish uchun appcompat’ni yangiroq versiyaga majburlaymiz.
+subprojects {
+    configurations.all {
+        resolutionStrategy.force("androidx.appcompat:appcompat:1.6.1")
+    }
+}
+
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
