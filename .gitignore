@@ -1,0 +1,17 @@
+backend/node_modules/
+backend/.env
+backend/firebase-service-account.json
+mobile/.dart_tool/
+mobile/build/
+mobile/.metadata
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/ios/Pods/
+mobile/ios/Flutter/Flutter.framework
+mobile/ios/Flutter/Flutter.podspec
+mobile/ios/Flutter/Generated.xcconfig
+mobile/ios/Flutter/flutter_export_environment.sh
+
+# Local Flutter SDK / cache (repo'ga kiritilmasin)
+_flutter/
+_pub_cache/
