@@ -76,7 +76,8 @@ class _AppState extends State<App> {
           ),
           home: Builder(
             builder: (context) {
-              if (!state.hasBaseUrl) return SettingsScreen(state: state);
+              // Base URL endi default orqali avtomatik beriladi.
+              // (Agar developer URL'ni o‘zgartirmoqchi bo‘lsa, Settings orqali qo‘lda saqlab qo‘yishi mumkin.)
               if (!state.isUserLoggedIn && state.isAdminLoggedIn) return AdminShell(state: state);
               if (!state.isUserLoggedIn) return AuthScreen(state: state);
               return HomeShell(

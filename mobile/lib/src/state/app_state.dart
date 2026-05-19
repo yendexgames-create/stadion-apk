@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 
 import '../api/api_client.dart';
 import '../api/models.dart';
+import '../config/app_config.dart';
 import '../storage/prefs.dart';
 
 class AppState extends ChangeNotifier {
@@ -30,7 +31,9 @@ class AppState extends ChangeNotifier {
   ApiClient get api => ApiClient(baseUrl: _baseUrl ?? '', userToken: _userToken, adminToken: _adminToken);
 
   Future<void> init() async {
-    _baseUrl = _prefs.baseUrl;
+    // 1) Avval SharedPreferences'dan o‘qiymiz (agar foydalanuvchi qo‘lda sozlagan bo‘lsa).
+    // 2) Aks holda build-time `--dart-define=BASE_URL=...` (yoki default) ishlaydi.
+    _baseUrl = (_prefs.baseUrl?.trim().isNotEmpty ?? false) ? _prefs.baseUrl : AppConfig.defaultBaseUrl;
     _userToken = _prefs.userToken;
     _adminToken = _prefs.adminToken;
     notifyListeners();
