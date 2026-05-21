@@ -242,3 +242,28 @@ Invoke-RestMethod -Method Delete -Uri "http://localhost:8080/bookings/<bookingId
 3) Push (FCM)ni yoqish:
    - tokenlarni backendga yuborish
    - weekly expiring push
+
+## 12) Telegram botga yangilik (yuklab olish oqimi)
+
+Maqsad: botga `/start` yuborilganda foydalanuvchi telefon raqamini (kontakt) yuboradi, so‘ng platformani tanlaydi (Android / iPhone) va mos o‘rnatish yo‘riqnomasi + havola chiqadi.
+
+Qilingan ishlar:
+- Bot `/start` matni yangilandi: kontakt yuborishni aniq so‘raydi.
+- Kontakt kelgach `users` ga `telegramChatId` bog‘lanadi va darhol platforma tanlash (inline) chiqadi.
+- `/download` komandasi qo‘shildi: platforma tanlashni qayta chiqaradi.
+- Platforma tanlanganda `users.preferredPlatform` (`android`/`ios`) saqlanadi.
+- Android uchun APK o‘rnatishdagi “security alert” bo‘yicha qisqa yo‘riqnoma yuboriladi.
+- iOS uchun TestFlight/App Store orqali o‘rnatish tushuntiriladi (iOS’da “APK kabi sideload” odatda bo‘lmaydi).
+
+Kerakli env (backend):
+- `ANDROID_APK_URL` — Android APK yuklab olish havolasi (https bo‘lishi tavsiya).
+- `ANDROID_APK_SHA256` — ixtiyoriy, ishonch uchun checksum.
+- `IOS_INSTALL_URL` — iOS TestFlight yoki App Store havolasi.
+
+Railway (deploy) eslatma:
+- Railway → Variables’da yuqoridagi env’larni qo‘shing/yangilang.
+- O‘zgarishlar GitHub’ga push bo‘lgach Railway avtomatik redeploy bo‘lsa, yangi bot matnlari va havolalar darhol ishlaydi (aks holda manual redeploy).
+
+Eslatma (xavfsizlik ogohlantirishi):
+- Android’da Play Marketdan tashqaridan o‘rnatiladigan ilovalar doim ogohlantirishi mumkin; “to‘liq o‘chirib yuborish” yo‘li yo‘q.
+- Eng ishonchli yechimlar: Google Play (Closed testing / Internal testing) yoki iOS’da TestFlight.
