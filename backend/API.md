@@ -2,6 +2,22 @@
 
 Base URL: `PUBLIC_BASE_URL`
 
+## App
+
+### GET /app/latest?platform=android|ios
+
+Response:
+
+```json
+{
+  "platform": "android",
+  "versionName": "1.0.2",
+  "versionCode": 2,
+  "url": "https://.../app-release.apk",
+  "sha256": "..."
+}
+```
+
 ## Auth (User)
 
 ### POST /auth/request-otp

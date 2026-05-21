@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../api/api_client.dart';
 import '../api/models.dart';
@@ -19,6 +21,8 @@ class AppState extends ChangeNotifier {
   String? _userToken;
   String? _adminToken;
   UserMe? _me;
+  AppLatestRelease? _update;
+  bool _updateDismissed = false;
 
   String? get baseUrl => _baseUrl;
   bool get hasBaseUrl => (_baseUrl ?? '').isNotEmpty;
@@ -30,6 +34,7 @@ class AppState extends ChangeNotifier {
   bool get isAdminLoggedIn => (_adminToken ?? '').isNotEmpty;
 
   UserMe? get me => _me;
+  AppLatestRelease? get update => _updateDismissed ? null : _update;
 
   ApiClient get api => ApiClient(baseUrl: _baseUrl ?? '', userToken: _userToken, adminToken: _adminToken);
 
@@ -53,6 +58,7 @@ class AppState extends ChangeNotifier {
     if (isAdminLoggedIn) {
       _startPenaltyPolling();
     }
+    await checkUpdate(silent: true);
   }
 
   Future<void> setBaseUrl(String url) async {
@@ -116,6 +122,50 @@ class AppState extends ChangeNotifier {
 
   Future<List<PenaltyItem>> getPenalties() => api.getPenalties();
   Future<AdminScheduleResponse> getAdminSchedule(String startDateYmd) => api.getAdminSchedule(startDateYmd);
+
+  Future<void> checkUpdate({bool silent = false}) async {
+    try {
+      final p = defaultTargetPlatform;
+      final platform = p == TargetPlatform.android
+          ? 'android'
+          : p == TargetPlatform.iOS
+              ? 'ios'
+              : '';
+      if (platform.isEmpty) return;
+
+      final latest = await api.getLatestRelease(platform);
+      if (latest.versionCode <= 0) return;
+      if (latest.url.isEmpty) return;
+
+      final info = await PackageInfo.fromPlatform();
+      final currentCode = int.tryParse(info.buildNumber) ?? 0;
+      if (latest.versionCode <= currentCode) return;
+
+      if (_prefs.lastUpdatePromptCode == latest.versionCode) return;
+
+      _update = latest;
+      _updateDismissed = false;
+      notifyListeners();
+    } catch (e) {
+      if (!silent) rethrow;
+    }
+  }
+
+  void dismissUpdate() {
+    if (_update == null) return;
+    _updateDismissed = true;
+    notifyListeners();
+  }
+
+  Future<void> startUpdate() async {
+    final u = _update;
+    if (u == null) return;
+    if (u.url.isEmpty) return;
+    await _prefs.setLastUpdatePromptCode(u.versionCode);
+    _updateDismissed = true;
+    notifyListeners();
+    await launchUrl(Uri.parse(u.url), mode: LaunchMode.externalApplication);
+  }
 
   void _stopPenaltyPolling() {
     _penaltyTimer?.cancel();

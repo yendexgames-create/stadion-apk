@@ -15,14 +15,7 @@ function platformKeyboard() {
 }
 
 function androidInstallText() {
-  const parts = [
-    "Android uchun APK yuklab olish.",
-    "",
-    "Agar o‘rnatishda xavfsizlik ogohlantirishi chiqsa, bu odatda Play Marketdan tashqaridan o‘rnatilayotgan ilova bo‘lgani uchun.",
-    "O‘tish yo‘li (Android 8+): Settings → Apps → (Telegram/Chrome) → Install unknown apps → Allow.",
-    "Agar Play Protect blok qilsa: “Install anyway” (faqat havolaga ishonchingiz bo‘lsa).",
-    ""
-  ];
+  const parts = ["Android uchun ilovani yuklab oling.", "", "APK xavfsiz, bemalol ruxsat beravering.", ""];
 
   if (config.androidApkSha256) {
     parts.push(`APK SHA-256: ${config.androidApkSha256}`, "");

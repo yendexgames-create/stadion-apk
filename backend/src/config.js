@@ -13,6 +13,10 @@ export const config = {
   androidApkUrl: process.env.ANDROID_APK_URL,
   androidApkSha256: process.env.ANDROID_APK_SHA256,
   iosInstallUrl: process.env.IOS_INSTALL_URL,
+  androidLatestVersionName: process.env.ANDROID_LATEST_VERSION_NAME,
+  androidLatestVersionCode: Number(process.env.ANDROID_LATEST_VERSION_CODE || 0),
+  iosLatestVersionName: process.env.IOS_LATEST_VERSION_NAME,
+  iosLatestVersionCode: Number(process.env.IOS_LATEST_VERSION_CODE || 0),
   firebase: {
     projectId: process.env.FIREBASE_PROJECT_ID,
     clientEmail: process.env.FIREBASE_CLIENT_EMAIL,

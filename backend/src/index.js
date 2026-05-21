@@ -3,6 +3,7 @@ import { assertConfig, config } from "./config.js";
 import { connectDb } from "./db.js";
 import { authRouter } from "./routes/auth.js";
 import { adminRouter } from "./routes/admin.js";
+import { appRouter } from "./routes/app.js";
 import { meRouter } from "./routes/me.js";
 import { slotsRouter } from "./routes/slots.js";
 import { bookingsRouter } from "./routes/bookings.js";
@@ -21,6 +22,7 @@ async function main() {
 
   app.get("/health", (req, res) => res.json({ ok: true }));
 
+  app.use("/app", appRouter);
   app.use("/auth", authRouter);
   app.use("/admin", adminRouter);
   app.use("/me", requireAuth, meRouter);

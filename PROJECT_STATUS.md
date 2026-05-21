@@ -252,7 +252,7 @@ Qilingan ishlar:
 - Kontakt kelgach `users` ga `telegramChatId` bog‘lanadi va darhol platforma tanlash (inline) chiqadi.
 - `/download` komandasi qo‘shildi: platforma tanlashni qayta chiqaradi.
 - Platforma tanlanganda `users.preferredPlatform` (`android`/`ios`) saqlanadi.
-- Android uchun APK o‘rnatishdagi “security alert” bo‘yicha qisqa yo‘riqnoma yuboriladi.
+- Android uchun qisqa matn yuboriladi: “Telefon ogohlantirsa, ruxsat bering”.
 - iOS uchun TestFlight/App Store orqali o‘rnatish tushuntiriladi (iOS’da “APK kabi sideload” odatda bo‘lmaydi).
 
 Kerakli env (backend):
@@ -267,3 +267,17 @@ Railway (deploy) eslatma:
 Eslatma (xavfsizlik ogohlantirishi):
 - Android’da Play Marketdan tashqaridan o‘rnatiladigan ilovalar doim ogohlantirishi mumkin; “to‘liq o‘chirib yuborish” yo‘li yo‘q.
 - Eng ishonchli yechimlar: Google Play (Closed testing / Internal testing) yoki iOS’da TestFlight.
+
+## 13) Ilova ichida yangilanish (Android)
+
+Maqsad: har safar yangi APK chiqqanda foydalanuvchi “qayta-qayta o‘rnatib yurmasin” — ilova ichida yangilanish modali chiqsin va “Yangilash” bosilganda yangi APK yuklab olish sahifasiga o‘tsin.
+
+Qilingan ishlar:
+- Backend endpoint qo‘shildi: `GET /app/latest?platform=android|ios` (eng so‘nggi versiya ma’lumoti).
+- Mobile ilova ishga tushganda versiyani tekshiradi; yangi versiya bo‘lsa modal chiqadi.
+- “Yangilash” bosilganda APK havolasi brauzerda ochiladi (Android o‘rnatish jarayonida baribir foydalanuvchi tasdiqlaydi).
+
+Kerakli env (Railway Variables):
+- `ANDROID_LATEST_VERSION_NAME`, `ANDROID_LATEST_VERSION_CODE` (Flutter `version: x.y.z+CODE` dagi CODE).
+- `ANDROID_APK_URL` (APK direct link).
+- iOS uchun xuddi shunday: `IOS_LATEST_VERSION_NAME`, `IOS_LATEST_VERSION_CODE`, `IOS_INSTALL_URL`.

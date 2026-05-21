@@ -293,3 +293,29 @@ class AdminScheduleSlot {
     );
   }
 }
+
+class AppLatestRelease {
+  AppLatestRelease({
+    required this.platform,
+    required this.versionName,
+    required this.versionCode,
+    required this.url,
+    required this.sha256,
+  });
+
+  final String platform;
+  final String versionName;
+  final int versionCode;
+  final String url;
+  final String sha256;
+
+  factory AppLatestRelease.fromJson(Map<String, dynamic> json) {
+    return AppLatestRelease(
+      platform: s(json['platform']),
+      versionName: s(json['versionName']),
+      versionCode: (json['versionCode'] is int) ? json['versionCode'] as int : int.tryParse('${json['versionCode']}') ?? 0,
+      url: s(json['url']),
+      sha256: s(json['sha256']),
+    );
+  }
+}

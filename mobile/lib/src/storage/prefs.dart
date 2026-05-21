@@ -9,6 +9,7 @@ class Prefs {
   static const _kUserToken = 'userToken';
   static const _kAdminToken = 'adminToken';
   static const _kLastPenaltyId = 'lastPenaltyId';
+  static const _kLastUpdatePromptCode = 'lastUpdatePromptCode';
 
   String? get baseUrl => _p.getString(_kBaseUrl);
   Future<void> setBaseUrl(String value) => _p.setString(_kBaseUrl, value);
@@ -24,4 +25,7 @@ class Prefs {
 
   String? get lastPenaltyId => _p.getString(_kLastPenaltyId);
   Future<void> setLastPenaltyId(String value) => _p.setString(_kLastPenaltyId, value);
+
+  int get lastUpdatePromptCode => _p.getInt(_kLastUpdatePromptCode) ?? 0;
+  Future<void> setLastUpdatePromptCode(int value) => _p.setInt(_kLastUpdatePromptCode, value);
 }

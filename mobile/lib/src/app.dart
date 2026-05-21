@@ -18,6 +18,7 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   late final AppState state;
+  int _shownUpdateCode = 0;
 
   @override
   void initState() {
@@ -51,7 +52,7 @@ class _AppState extends State<App> {
             appBarTheme: const AppBarTheme(centerTitle: false),
             inputDecorationTheme: InputDecorationTheme(
               filled: true,
-              fillColor: scheme.surfaceContainerHighest.withOpacity(0.65),
+              fillColor: scheme.surfaceContainerHighest.withValues(alpha: 0.65),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
               enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
               focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
@@ -64,12 +65,12 @@ class _AppState extends State<App> {
             ),
             cardTheme: CardThemeData(
               elevation: 0,
-              color: scheme.surfaceContainerHighest.withOpacity(0.55),
+              color: scheme.surfaceContainerHighest.withValues(alpha: 0.55),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             ),
             navigationBarTheme: NavigationBarThemeData(
-              backgroundColor: scheme.surface.withOpacity(0.35),
-              indicatorColor: scheme.primary.withOpacity(0.22),
+              backgroundColor: scheme.surface.withValues(alpha: 0.35),
+              indicatorColor: scheme.primary.withValues(alpha: 0.22),
               labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
             ),
           ),
@@ -77,6 +78,33 @@ class _AppState extends State<App> {
             builder: (context) {
               // Base URL endi default orqali avtomatik beriladi.
               // (Agar developer URL'ni o‘zgartirmoqchi bo‘lsa, Settings orqali qo‘lda saqlab qo‘yishi mumkin.)
+              final u = state.update;
+              if (u != null && u.versionCode != _shownUpdateCode) {
+                _shownUpdateCode = u.versionCode;
+                WidgetsBinding.instance.addPostFrameCallback((_) async {
+                  if (!mounted) return;
+                  await showDialog<void>(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Yangilanish bor'),
+                        content: Text('Yangi versiya mavjud: v${u.versionName}'),
+                        actions: [
+                          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Keyinroq')),
+                          FilledButton(
+                            onPressed: () async {
+                              Navigator.of(context).pop();
+                              await state.startUpdate();
+                            },
+                            child: const Text('Yangilash'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                  state.dismissUpdate();
+                });
+              }
               if (!state.isUserLoggedIn && state.isAdminLoggedIn) return AdminShell(state: state);
               if (!state.isUserLoggedIn) return AuthScreen(state: state);
               return HomeShell(

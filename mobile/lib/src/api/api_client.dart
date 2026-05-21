@@ -143,4 +143,11 @@ class ApiClient {
     if (r.statusCode >= 200 && r.statusCode < 300) return AdminScheduleResponse.fromJson(body);
     _throwApi(r.statusCode, body);
   }
+
+  Future<AppLatestRelease> getLatestRelease(String platform) async {
+    final r = await http.get(_u('/app/latest', {'platform': platform}), headers: _headers());
+    final body = await _decode(r);
+    if (r.statusCode >= 200 && r.statusCode < 300) return AppLatestRelease.fromJson(body);
+    _throwApi(r.statusCode, body);
+  }
 }
