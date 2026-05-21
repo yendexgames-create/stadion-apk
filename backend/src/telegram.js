@@ -101,8 +101,13 @@ export function createTelegramBot() {
 
     const url = config.androidApkUrl;
     if (url) {
-      await ctx.reply(androidInstallText(), Markup.inlineKeyboard([[Markup.button.url("APKni yuklab olish", url)]]));
-      return;
+      try {
+        await ctx.replyWithDocument({ url }, { caption: androidInstallText() });
+        return;
+      } catch {
+        await ctx.reply(androidInstallText(), Markup.inlineKeyboard([[Markup.button.url("APKni yuklab olish", url)]]));
+        return;
+      }
     }
     await ctx.reply(androidInstallText());
   });
