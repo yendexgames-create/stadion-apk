@@ -254,7 +254,7 @@ Qilingan ishlar:
 - Platforma tanlanganda `users.preferredPlatform` (`android`/`ios`) saqlanadi.
 - Android uchun qisqa matn yuboriladi: “Telefon ogohlantirsa, ruxsat bering”.
 - iOS uchun TestFlight/App Store orqali o‘rnatish tushuntiriladi (iOS’da “APK kabi sideload” odatda bo‘lmaydi).
-- Android tanlanganda `ANDROID_APK_URL` bo‘lsa APK fayli bot chat’ga “document” sifatida yuborishga harakat qiladi (ishlamasa havola tugmasi bilan fallback).
+- Android tanlanganda `ANDROID_APK_URL` bo‘lsa APK fayli bot chat’ga `.apk` filename bilan “document” sifatida yuborishga harakat qiladi (ishlamasa havola tugmasi bilan fallback).
 
 Kerakli env (backend):
 - `ANDROID_APK_URL` — Android APK yuklab olish havolasi (https bo‘lishi tavsiya).

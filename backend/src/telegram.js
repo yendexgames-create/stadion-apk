@@ -102,7 +102,7 @@ export function createTelegramBot() {
     const url = config.androidApkUrl;
     if (url) {
       try {
-        await ctx.replyWithDocument({ url }, { caption: androidInstallText() });
+        await ctx.replyWithDocument({ url, filename: "stadion_bron.apk" }, { caption: androidInstallText() });
         return;
       } catch {
         await ctx.reply(androidInstallText(), Markup.inlineKeyboard([[Markup.button.url("APKni yuklab olish", url)]]));
